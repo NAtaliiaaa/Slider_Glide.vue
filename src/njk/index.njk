@@ -2,12 +2,62 @@
 {% extends "layouts/master.njk" %}
 
 {% block content %}
-	<div id="app">
-		<input v-model="inputValue" type="text">
-		{{inputValue}} {# <-- i can use the brackets now #}
 
-		<ul>
-			<list-item v-bind:value="inputValue"></list-item>
-		</ul>
-	</div>
+<div id="app" class="to_do_list">
+		<h1 class="">***To do list***</h1>
+		  	<div class="">
+				<input class="list__inp" 
+					type="text" 
+					placeholder="Enter your affairs..." 
+					v-model="newTodo"
+					>
+				<input class="list__btn" 
+						type="button"
+						value="Add"
+						v-on:click="addTodo(newTodo)"
+						>
+					  
+		  </div>
+
+		<template v-if="affairs.length == 0">
+			<h3 class="list__empty">The list is empty!!! </h3>
+		</template>
+
+		<template v-else>
+		{# =========================== #}
+		{# ===========================TASK 2  ===========================#}
+		{# =========================== #}
+
+
+		{# <ul v-for="(i, index) in affairs" >
+			<list-item  v-bind:affairs="i"> </list-item>
+			<input class="list__btn" type="button" value="Delete" v-on:click="removeTodo(index)"> 
+		</ul> #}
+
+		{# =========================== #}
+		{# ===========================TASK 1  ===========================#}
+		{# =========================== #}
+
+			<div class="list" v-for="(toDoAffair, index) in affairs" >
+				<div class="list__affair">{{ toDoAffair }}</div>
+				<div class="button__affair" >
+					<input class="list__btn" type="button" value="Delete" v-on:click="removeTodo(index)">
+				</div>
+			</div>
+			<input class="list__btn"
+					value="Clear All"
+					type="button"
+					v-on:click="clearAll()" 
+					>
+		</template>
+</div>
+    
+
+
+		{# =========================== #}
+		{# ===========================TASK 3  ===========================#}
+		{# =========================== #}
+
+
+<div class="random" id="app8">{{randomName}}</div>
 {% endblock %}
