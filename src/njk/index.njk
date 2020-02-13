@@ -2,14 +2,79 @@
 {% extends "layouts/master.njk" %}
 {% block content %}
 
-<div id="app">
- 	<blog-list></blog-list>
+
+<div id="watch-example">
+  <p>
+    Ask a yes/no question:
+    <input v-on:click = "show = !show" v-model="question">
+  </p>
+  <p>{{ answer }}</p>
+   <transition name = "shiftx">
+      <p v-show = "show">
+      <img v-bind:src="image" alt="" srcset="">
+      </p>
+  </transition>
 </div>
-<div id="app1">
-	<first-component></first-component>
-	<second-component></second-component>
-</div>	
 
+{# Task 2 #}
 
+<div class="siema-wrap">
+	<div class="siema">
+		<ul>
+      <li class="work-dreamshare__item w1-3">
+          <div class="work-dreamshare__bg" style="background-image: url('../img/images/Object (9).png');"></div>
+          <div class="work-dreamshare__overlay overlay"></div>
+          <div class="work-dreamshare__text">
+            <div class="work-dreamshare__cl">
+                                <span class="work-dreamshare__step">Step 3</span>
+            </div>
+            <p class="work-dreamshare__title"> Sed leo enim, condimentum </p>
+            <p class=" work-dreamshare__subtext "> Quisque libero libero, dictum non turpis in, luctus semper lorem. Donec rhoncus a leo sit amet facilisis. </p>
+          </div>
+        </li>
+		</ul>
+		<ul>
+      <li class="work-dreamshare__item w1-3">
+          <div class="work-dreamshare__bg" style="background-image: url('../img/images/Object (10).png');"></div>
+          <div class="work-dreamshare__overlay overlay"></div>
+          <div class="work-dreamshare__text">
+            <div class="work-dreamshare__cl">
+                                <span class="work-dreamshare__step">Step 3</span>
+            </div>
+            <p class="work-dreamshare__title"> Sed leo enim, condimentum </p>
+            <p class=" work-dreamshare__subtext "> Quisque libero libero, dictum non turpis in, luctus semper lorem. Donec rhoncus a leo sit amet facilisis. </p>
+          </div>
+        </li>
+    </ul>
+		<ul>
+      <li class="work-dreamshare__item w1-3">
+          <div class="work-dreamshare__bg" style="background-image: url('../img/images/Object (11).png');"></div>
+          <div class="work-dreamshare__overlay overlay"></div>
+          <div class="work-dreamshare__text">
+            <div class="work-dreamshare__cl">
+                                <span class="work-dreamshare__step">Step 3</span>
+            </div>
+            <p class="work-dreamshare__title"> Sed leo enim, condimentum </p>
+            <p class=" work-dreamshare__subtext "> Quisque libero libero, dictum non turpis in, luctus semper lorem. Donec rhoncus a leo sit amet facilisis. </p>
+          </div>
+        </li>
+  		</ul>
+	
+    	<ul>
+      <li class="work-dreamshare__item w1-3">
+          <div class="work-dreamshare__bg" style="background-image: url('../img/images/Object (11).png');"></div>
+          <div class="work-dreamshare__overlay overlay"></div>
+          <div class="work-dreamshare__text">
+            <div class="work-dreamshare__cl">
+                                <span class="work-dreamshare__step">Step 3</span>
+            </div>
+            <p class="work-dreamshare__title"> Sed leo enim, condimentum </p>
+            <p class=" work-dreamshare__subtext "> Quisque libero libero, dictum non turpis in, luctus semper lorem. Donec rhoncus a leo sit amet facilisis. </p>
+          </div>
+        </li>
+  		</ul>
+	</div>
+</div>
 
+ 
 {% endblock %}

@@ -1,163 +1,67 @@
 import '@babel/polyfill';
 import Vue from 'vue/dist/vue.esm.js';
+import axios from 'axios';
+import _ from 'lodash';
+import Siema from 'siema';
+// import VueCarousel from 'vue-carousel';
+
+let app = new Vue({
+    el: ".siema",
+    mounted() {
+        this.mySiema = new Siema({
+            duration: 200,
+            easing: 'ease-out',
+            perPage: 3,
+            startIndex: 0,
+            draggable: true,
+            threshold: 20,
+            loop: false,
+        });
+    }
+});
 
 
-//1
-Vue.component("blog-item", {
-    template: '<li>{{ message }} !</li>',
-    customOption: 'something',
-    data() {
-        return {
-            message: 'Welcome to Vue.js'
-        };
+
+var watchExampleVM = new Vue({
+    el: '#watch-example',
+    data: {
+        show: true,
+        question: '',
+        answer: 'Пока вы не зададите вопрос, я не могу ответить!'
     },
-
-    beforeCreate() {
-
+    watch: {
+        // эта функция запускается при любом изменении вопроса
+        question: function(newQuestion, oldQuestion) {
+            this.answer = 'Ожидаю, когда вы закончите печатать...'
+            this.debouncedGetAnswer()
+        }
     },
     created: function() {
-        console.log('created')
-        console.log(this.$options.customOption)
-        console.log(`${this.message}`);
-
+        // _.debounce — это функция lodash, позволяющая ограничить то,
+        // насколько часто может выполняться определённая операция.
+        // В данном случае мы ограничиваем частоту обращений к yesno.wtf/api,
+        // дожидаясь завершения печати вопроса перед отправкой ajax-запроса.
+        // Узнать больше о функции _.debounce (и её родственнице _.throttle),
+        // можно в документации: https://lodash.com/docs#debounce
+        this.debouncedGetAnswer = _.debounce(this.getAnswer, 500)
     },
-    beforeMount: function() {
-        console.log('beforeMount()');
-        console.log(this.$options.customOption)
-        console.log(`${this.message}`); //console.log(this.message);
-    },
-    mounted: function() {
-        console.log('mounted()');
-        console.log(this.$el);
-        console.log(this.$options.customOption);
-
-
-    },
-    // beforeUpdate: function() {
-    //     console.log('beforeUpdate()');
-    //     console.log(this.$el);
-    // },
-    // updated: function() {
-    //     console.log('updated()');
-    // },
-    // beforeDestroy: function() {
-    //     console.log('beforeDestroy()');
-    // },
-    // destroyed: function() {
-    //     console.log('destroyed()');
-    // }
-});
-//2
-Vue.component("blog-list", {
-    template: '<ul><blog-item> </blog-item></ul >',
-});
-
-
-// task2
-
-Vue.component("first-component", {
-    template: `<div class="first-component" v-on:mouseover="num"></div>`,
     methods: {
-        num() {
-            return this.$parent.$children[1].count++;
+        getAnswer: function() {
+            if (this.question.indexOf('?') === -1) {
+                this.answer = 'Вопросы обычно заканчиваются вопросительным знаком. ;-)'
+                return
+            }
+            this.answer = 'Думаю...'
+            var vm = this
+            axios.get('https://yesno.wtf/api')
+                .then(function(response) {
+                    vm.answer = _.capitalize(response.data.answer)
+                    vm.image = response.data.image
+                })
+
+            .catch(function(error) {
+                vm.answer = 'Ошибка! Не могу связаться с API. ' + error
+            })
         }
     }
-});
-
-Vue.component("second-component", {
-    template: `<div class="second-component" >Кількість: {{count}}</div>`,
-    data() {
-        return {
-            count: 0
-        };
-    }
-});
-
-
-document.addEventListener('DOMContentLoaded', () => {
-    const vm = new Vue({
-        el: '#app',
-        data: {
-
-        },
-        created() {
-            console.log(`${this}`);
-        }
-    });
-    let vm1 = new Vue({
-        el: "#app1",
-    });
-
-
-
-
-
-
-
-    // let vm5 = new Vue({
-    //     el: "#app1",
-    // });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // Vue.component('list-item', {
-    //     props: ['affairs'],
-    //     template: '<li  class="list__affair">{{affairs}}  </li>',
-    // });
-
-    // document.addEventListener('DOMContentLoaded', () => {
-    //     const vue = new Vue({
-    //         el: '#app',
-    //         data: {
-    //             newTodo: '',
-    //             affairs: []
-
-    //         },
-    //         methods: {
-    //             addTodo(toDoAffair) {
-
-    //                 this.affairs.push(toDoAffair)
-    //                 this.newTodo = ''
-    //             },
-    //             clearAll() {
-    //                 this.affairs = []
-    //             },
-    //             removeTodo(index) {
-    //                 this.affairs.splice(index, 1)
-    //             }
-    //         }
-
-    //     });
-
-    //     window.VUE = vue;
-
-    // const k = new Vue({
-    //     el: '#app8',
-    //     data() {
-    //         return {
-    //             names: ["name1", "name2", "name3", "name4", "name5", "name6"]
-    //         };
-    //     },
-    //     computed: {
-    //         randomName() {
-    //             return this.names[Math.floor(Math.random() * this.names.length)];
-    //         }
-    //     }
-    // });
-});
+})
