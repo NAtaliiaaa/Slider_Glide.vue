@@ -1,67 +1,101 @@
 import '@babel/polyfill';
+import '../js/paralax'
 import Vue from 'vue/dist/vue.esm.js';
 import axios from 'axios';
 import _ from 'lodash';
-import Siema from 'siema';
-// import VueCarousel from 'vue-carousel';
-
-let app = new Vue({
-    el: ".siema",
-    mounted() {
-        this.mySiema = new Siema({
-            duration: 200,
-            easing: 'ease-out',
-            perPage: 3,
-            startIndex: 0,
-            draggable: true,
-            threshold: 20,
-            loop: false,
-        });
-    }
-});
+// import Siema from 'siema';
+import popupS from 'popups';
+import Datepicker from 'vuejs-datepicker';
+import moment from 'moment'
 
 
 
-var watchExampleVM = new Vue({
-    el: '#watch-example',
-    data: {
-        show: true,
-        question: '',
-        answer: 'Пока вы не зададите вопрос, я не могу ответить!'
-    },
-    watch: {
-        // эта функция запускается при любом изменении вопроса
-        question: function(newQuestion, oldQuestion) {
-            this.answer = 'Ожидаю, когда вы закончите печатать...'
-            this.debouncedGetAnswer()
-        }
-    },
-    created: function() {
-        // _.debounce — это функция lodash, позволяющая ограничить то,
-        // насколько часто может выполняться определённая операция.
-        // В данном случае мы ограничиваем частоту обращений к yesno.wtf/api,
-        // дожидаясь завершения печати вопроса перед отправкой ajax-запроса.
-        // Узнать больше о функции _.debounce (и её родственнице _.throttle),
-        // можно в документации: https://lodash.com/docs#debounce
-        this.debouncedGetAnswer = _.debounce(this.getAnswer, 500)
-    },
-    methods: {
-        getAnswer: function() {
-            if (this.question.indexOf('?') === -1) {
-                this.answer = 'Вопросы обычно заканчиваются вопросительным знаком. ;-)'
-                return
+document.addEventListener('DOMContentLoaded', () => {
+
+    var vm = new Vue({
+        el: "#app",
+        components: {
+            Datepicker
+        },
+        data: {
+            radioColor: [{
+                    id: 0,
+                    color: "rgb(87, 3, 126)",
+                },
+                {
+                    id: 1,
+                    color: "rgb(126, 3, 89)",
+                },
+                {
+                    id: 2,
+                    color: "rgb(196, 51, 7)",
+                },
+                {
+                    id: 3,
+                    color: "rgb(69, 54, 199)",
+                }
+            ],
+
+            radioBtn: null,
+            show: false,
+            // credNum: '4532015112830366',
+            credNum: '',
+            securityCode: '',
+            cardName: '',
+        },
+        methods: {
+            name: function creditCardName(name) {
+                if (this.cardName === '') {
+                    return true
+                } else {
+                    return false
+                }
+            },
+            customFormatter(date) {
+                return moment(date).format('MMMM  YYYY');
+            },
+            security: function securCode(code) {
+                if (this.securityCode.length != 3) {
+                    return false
+                } else return true
+            },
+            pay: function valid_credit_card(value) {
+                if ((/[^0-9-\s]+/.test(value))) {
+                    // console.log(this.securityCode.length);
+                    console.log('false');
+                    return false;
+                } else {
+                    let nCheck = 0,
+                        bEven = false;
+                    value = value.replace(/\D/g, "");
+
+                    for (var n = value.length - 1; n >= 0; n--) {
+                        var cDigit = value.charAt(n),
+                            nDigit = parseInt(cDigit, 10);
+                        if (bEven && (nDigit *= 2) > 9) nDigit -= 9;
+                        nCheck += nDigit;
+                        bEven = !bEven;
+                    }
+                    return (nCheck % 10) == 0;
+                }
+            },
+            all: function al() {
+                if (this.pay(this.credNum) && (this.security(this.securityCode))) {
+                    // this.show = !this.show;
+                    popupS.window({
+                        mode: 'alert',
+                        content: 'Sucsses!!!',
+
+                    });
+
+                } else {
+                    popupS.window({
+                        mode: 'alert',
+                        content: 'ERROR!!!',
+
+                    });
+                }
             }
-            this.answer = 'Думаю...'
-            var vm = this
-            axios.get('https://yesno.wtf/api')
-                .then(function(response) {
-                    vm.answer = _.capitalize(response.data.answer)
-                    vm.image = response.data.image
-                })
-
-            .catch(function(error) {
-                vm.answer = 'Ошибка! Не могу связаться с API. ' + error
-            })
-        }
-    }
+        },
+    })
 })
