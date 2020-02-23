@@ -2,34 +2,20 @@
 {% extends "layouts/master.njk" %}
 {% block content %}
 
-	
-<div id="app">
-<form class="form_payInvoice" action="">
-    <p class="pay_method">Pay method</p>
-            <div class="radio__wrap color" v-for="radio in radioColor">
-                <label class="label" :for="radio.id" :style="{ 'background-color': radio.color }">
-				    <input :id="radio.id" :value="radio.color" type="radio">
-				</label>
-			</div>
 
-    <p class="pay_method">Card number {{pay(credNum)}}</p> 
-     <input v-model="credNum" id="cred" type="text"   class="credit_card" name="credit-card-number" />
 
-    <div class="date_code">
-        <div>
-            <p class="pay_method">Expiry date</p>
-            <datepicker :format="customFormatter"></datepicker>
-        </div>
-        <div>
-            <p class="pay_method">Security code {{security(securityCode)}}</p>
-            <input v-model="securityCode" class="credit_card" name="" id="">
-        </div>
-    </div>
-    <p class="pay_method">Card name</p>
-    <input v-model="cardName" class="credit_card"  id="" type="text" name="credit-card-name"  />
-    <p></p>
-<input type="button" value="payBtn" id="payBtn" v-on:click="all" >
-</form> 
-</div>
+<h1 class="title">Testimonials</h1>
+
+<div id="slide__glide">
+		<div data-glide-el="track">
+			<ul class="testimon__list">
+				<li is="item" 
+					v-for="review in slides"
+					v-bind:key="review.id"
+					v-bind:review="review"
+				></li>
+			</ul> 
+		</div>
+	</div>
 
 {% endblock %}

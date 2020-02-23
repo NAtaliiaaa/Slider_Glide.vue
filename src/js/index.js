@@ -1,101 +1,76 @@
 import '@babel/polyfill';
 import '../js/paralax'
 import Vue from 'vue/dist/vue.esm.js';
-import axios from 'axios';
 import _ from 'lodash';
-// import Siema from 'siema';
-import popupS from 'popups';
-import Datepicker from 'vuejs-datepicker';
-import moment from 'moment'
-
-
+import Glide from '@glidejs/glide';
 
 document.addEventListener('DOMContentLoaded', () => {
+    //  
+    // local component icon User is local for testimonial card
+    //
+    const icon = Vue.extend({
+        props: ["testimonial_icon"],
+        template: `<img class="test_icon" :src="testimonial_icon">`
+    })
 
-    var vm = new Vue({
-        el: "#app",
+    const separateReview = Vue.extend({
+        props: ["review"],
         components: {
-            Datepicker
+            "icon": icon
+        },
+        template: `<li class="section">
+                        <icon :testimonial_icon="review.icon"></icon>
+                        <p class="testimonial__title">{{ review.name }}</p>
+                        <p class="testimonial__description">{{review.description}}</p>
+		</li>`
+    })
+
+    var carousel = new Vue({
+        el: "#slide__glide",
+        components: {
+            "item": separateReview,
         },
         data: {
-            radioColor: [{
+            slides: [{
                     id: 0,
-                    color: "rgb(87, 3, 126)",
+                    name: "Vivianna Kiser",
+                    icon: "https://i.pinimg.com/236x/3f/de/4a/3fde4acb0a9cb680d16d62ca51e5ec36--urban-photography-milk.jpg",
+                    description: "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Libero consectetur ea blanditiis quisquam distinctio quia similique earum nisi adipisci molestiae aliquid excepturi voluptate laboriosam delectus, sunt iure corporis nobis expedita! Sapiente, mollitia? Sunt, quas at id molestiae dolorum modi sed quibusdam quasi possimus vitae numquam distinctio et alias quod error. "
                 },
                 {
                     id: 1,
-                    color: "rgb(126, 3, 89)",
+                    name: "Vivianna Kiser",
+                    icon: "https://lh3.googleusercontent.com/proxy/F2heoOXcO5Lb0k9tnr5pX6ZM8_adcJm2amOYYfu3c1rOH-9-tbSTioshhqej_a-_SgOFMFBe-TEtXEEP89deTq7dB6MnIbArc_l37bpCUlga6TtmLhiefWUN1J_oauwkj9AONomocemQfxANeVlxnLh23xZdhp_Ul-x69YhpXtV1G5-LOjWqtX7XoVZ-9iEU0RQ",
+                    description: "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Libero consectetur ea blanditiis quisquam distinctio quia similique earum nisi adipisci molestiae aliquid excepturi voluptate laboriosam delectus, sunt iure corporis nobis expedita! Sapiente, mollitia? Sunt, quas at id molestiae dolorum modi sed quibusdam quasi possimus vitae numquam distinctio et alias quod error. "
                 },
                 {
                     id: 2,
-                    color: "rgb(196, 51, 7)",
+                    name: "Vivianna Kiser",
+                    icon: "https://i.pinimg.com/736x/d2/84/1b/d2841bee07610a7559bb4c5eb6d41c38.jpg",
+                    description: "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Libero consectetur ea blanditiis quisquam distinctio quia similique earum nisi adipisci molestiae aliquid excepturi voluptate laboriosam delectus, sunt iure corporis nobis expedita! Sapiente, mollitia? Sunt, quas at id molestiae dolorum modi sed quibusdam quasi possimus vitae numquam distinctio et alias quod error. "
                 },
                 {
                     id: 3,
-                    color: "rgb(69, 54, 199)",
+                    name: "Vivianna Kiser",
+                    icon: "https://i.pinimg.com/236x/3f/de/4a/3fde4acb0a9cb680d16d62ca51e5ec36--urban-photography-milk.jpg",
+                    description: "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Libero consectetur ea blanditiis quisquam distinctio quia similique earum nisi adipisci molestiae aliquid excepturi voluptate laboriosam delectus, sunt iure corporis nobis expedita! Sapiente, mollitia? Sunt, quas at id molestiae dolorum modi sed quibusdam quasi possimus vitae numquam distinctio et alias quod error. "
+                },
+                {
+                    id: 4,
+                    name: "Vivianna Kiser",
+                    icon: "https://i.pinimg.com/236x/3f/de/4a/3fde4acb0a9cb680d16d62ca51e5ec36--urban-photography-milk.jpg",
+                    description: "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Libero consectetur ea blanditiis quisquam distinctio quia similique earum nisi adipisci molestiae aliquid excepturi voluptate laboriosam delectus, sunt iure corporis nobis expedita! Sapiente, mollitia? Sunt, quas at id molestiae dolorum modi sed quibusdam quasi possimus vitae numquam distinctio et alias quod error. "
                 }
-            ],
-
-            radioBtn: null,
-            show: false,
-            // credNum: '4532015112830366',
-            credNum: '',
-            securityCode: '',
-            cardName: '',
+            ]
         },
-        methods: {
-            name: function creditCardName(name) {
-                if (this.cardName === '') {
-                    return true
-                } else {
-                    return false
-                }
-            },
-            customFormatter(date) {
-                return moment(date).format('MMMM  YYYY');
-            },
-            security: function securCode(code) {
-                if (this.securityCode.length != 3) {
-                    return false
-                } else return true
-            },
-            pay: function valid_credit_card(value) {
-                if ((/[^0-9-\s]+/.test(value))) {
-                    // console.log(this.securityCode.length);
-                    console.log('false');
-                    return false;
-                } else {
-                    let nCheck = 0,
-                        bEven = false;
-                    value = value.replace(/\D/g, "");
-
-                    for (var n = value.length - 1; n >= 0; n--) {
-                        var cDigit = value.charAt(n),
-                            nDigit = parseInt(cDigit, 10);
-                        if (bEven && (nDigit *= 2) > 9) nDigit -= 9;
-                        nCheck += nDigit;
-                        bEven = !bEven;
-                    }
-                    return (nCheck % 10) == 0;
-                }
-            },
-            all: function al() {
-                if (this.pay(this.credNum) && (this.security(this.securityCode))) {
-                    // this.show = !this.show;
-                    popupS.window({
-                        mode: 'alert',
-                        content: 'Sucsses!!!',
-
-                    });
-
-                } else {
-                    popupS.window({
-                        mode: 'alert',
-                        content: 'ERROR!!!',
-
-                    });
-                }
-            }
-        },
+        mounted() {
+            new Glide('#slide__glide', {
+                type: 'carousel',
+                // startAt: 0,
+                // perView: 1,
+                peek: 400,
+            }).mount();
+        }
     })
-})
+
+});
